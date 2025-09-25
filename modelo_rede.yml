@@ -1,0 +1,57 @@
+model:
+  name: "Rede de Filas com 3 Servidores"
+  description: "Modelo baseado na imagem fornecida"
+  
+simulation:
+  arrival_time: 2.0  # Primeiro cliente chega no tempo 2.0
+  max_randoms: 100000
+  
+queues:
+  queue1:
+    servers: 1
+    capacity: 1  # G/G/1
+    service_time:
+      min: 1.0
+      max: 2.0
+    
+  queue2:
+    servers: 2
+    capacity: 5  # G/G/2/5
+    service_time:
+      min: 4.6
+      max: 4.6  # Tempo fixo de 4.6min
+    
+  queue3:
+    servers: 2
+    capacity: 10  # G/G/2/10  
+    service_time:
+      min: 5.0
+      max: 15.0
+
+arrivals:
+  external:
+    - queue: queue1
+      rate:
+        min: 2.4
+        max: 2.4  # Tempo fixo de 2.4min entre chegadas
+
+routing:
+  queue1:
+    - destination: queue2
+      probability: 0.8
+    - destination: queue3
+      probability: 0.2
+    
+  queue2:
+    - destination: exit
+      probability: 0.2
+    - destination: queue2  # Feedback loop
+      probability: 0.5
+    - destination: queue3
+      probability: 0.3
+      
+  queue3:
+    - destination: exit
+      probability: 0.3
+    - destination: queue2
+      probability: 0.7
